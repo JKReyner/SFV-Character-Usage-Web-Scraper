@@ -83,4 +83,4 @@ charUsage = list(map(lambda x, y, z:(x, y, z), fighter, rate, dateSet))
 
 df = pd.DataFrame(charUsage, columns = ["Character", "Usage Rate", "Date"])
 
-df.to_csv("%s - %s" % (year, month))
+df.to_csv("%s - %s.csv" % (year, month))

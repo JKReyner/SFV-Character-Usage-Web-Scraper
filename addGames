@@ -1,0 +1,97 @@
+/* This query will give each character their debut game and debut game series */
+
+/* Because SQL cannot display Japanese characters, which is how the data is initially exported from Python, replacing character names should be done in Excel before running this query. */
+
+/* create new columns for Game and Series */
+
+ALTER TABLE dbo.chardata ADD column_b VARCHAR(5) NULL;
+ALTER TABLE dbo.chardata ADD column_c VARCHAR(20) NULL;
+EXEC sp_rename 'dbo.chardata.column_c', 'DebutSeries', 'COLUMN';
+
+EXEC sp_rename 'dbo.chardata.Usage Rate', 'UsageRate', 'COLUMN';
+EXEC sp_rename 'dbo.chardata.column_b', 'DebutGame', 'COLUMN';
+
+/* assign each character based on their debut game */
+
+IF EXISTS (SELECT * FROM chardata WHERE Character='Ryu' OR Character = 'Ken' OR Character = 'Birdie' OR Character = 'Sagat')
+    UPDATE chardata SET DebutGame='SF1' WHERE Character='Ryu' OR Character = 'Ken' OR Character = 'Birdie' OR Character = 'Sagat';
+
+IF EXISTS (SELECT * FROM chardata WHERE 
+	Character='Guile' OR Character = 'Chun-Li' OR Character = 'Blanka' OR Character = 'Zangief' OR Character = 'E. Honda' OR Character = 'Dhalsim' 
+	OR Character = 'Claw' OR Character = 'Boxer' OR Character = 'Dictator')
+    UPDATE chardata SET DebutGame='SF2' WHERE 
+	Character='Guile' OR Character = 'Chun-Li' OR Character = 'Blanka' OR Character = 'Zangief' OR Character = 'E. Honda' OR Character = 'Dhalsim' 
+	OR Character = 'Claw' OR Character = 'Boxer' OR Character = 'Dictator';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Cammy')
+    UPDATE chardata SET DebutGame='SF2NC' WHERE Character = 'Cammy';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Akuma')
+    UPDATE chardata SET DebutGame='SF2T' WHERE Character = 'Akuma';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Cody' OR Character = 'Abigail' OR Character = 'Poison')
+    UPDATE chardata SET DebutGame='FF' WHERE Character = 'Cody' OR Character = 'Abigail' OR Character = 'Poison';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Lucia')
+    UPDATE chardata SET DebutGame='FF3' WHERE Character = 'Lucia';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Nash')
+    UPDATE chardata SET DebutGame='SFA' WHERE Character = 'Nash';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Sakura' OR Character = 'Zeku')
+    UPDATE chardata SET DebutGame='SFA2' WHERE Character = 'Sakura' OR Character = 'Zeku';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'R. Mika' OR Character = 'Karin')
+    UPDATE chardata SET DebutGame='SFA3' WHERE Character = 'R. Mika' OR Character = 'Karin';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Alex' OR Character = 'Ibuki' OR Character = 'Gill' OR Character = 'Kolin')
+    UPDATE chardata SET DebutGame='SF3' WHERE Character = 'Alex' OR Character = 'Ibuki' OR Character = 'Gill' OR Character = 'Kolin';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Urien')
+    UPDATE chardata SET DebutGame='SF3GI' WHERE Character = 'Urien';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Seth' OR Character = 'Ed')
+    UPDATE chardata SET DebutGame='SF4' WHERE Character = 'Seth' OR Character = 'Ed';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Juri')
+    UPDATE chardata SET DebutGame='SSF4' WHERE Character = 'Juri';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Necalli' OR Character = 'Rashid' OR Character = 'Laura' OR Character = 'F.A.N.G.')
+    UPDATE chardata SET DebutGame='SF5' WHERE Character = 'Necalli' OR Character = 'Rashid' OR Character = 'Laura' OR Character = 'F.A.N.G.';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Falke' OR Character = 'Menat')
+    UPDATE chardata SET DebutGame='SF5S2' WHERE Character = 'Falke' OR Character = 'Menat';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'G')
+    UPDATE chardata SET DebutGame='SF5S3' WHERE Character = 'G';
+
+IF EXISTS (SELECT * FROM chardata WHERE Character = 'Kage')
+    UPDATE chardata SET DebutGame='SF5S4' WHERE Character = 'Kage';
+
+/* assign each game to its general game series */
+
+IF EXISTS (SELECT * FROM chardata WHERE DebutGame LIKE 'SF1')
+    UPDATE chardata SET DebutSeries = 'Street Fighter' WHERE DebutGame LIKE 'SF1';
+
+IF EXISTS (SELECT * FROM chardata WHERE DebutGame LIKE '%' + 'SF2' + '%')
+    UPDATE chardata SET DebutSeries = 'Street Fighter II' WHERE DebutGame LIKE '%' + 'SF2' + '%';
+
+IF EXISTS (SELECT * FROM chardata WHERE DebutGame LIKE '%' + 'SFA' + '%')
+    UPDATE chardata SET DebutSeries = 'Street Fighter Alpha' WHERE DebutGame LIKE '%' + 'SFA' + '%';
+
+IF EXISTS (SELECT * FROM chardata WHERE DebutGame LIKE '%' + 'SF3' + '%')
+    UPDATE chardata SET DebutSeries = 'Street Fighter III' WHERE DebutGame LIKE '%' + 'SF3' + '%';
+
+IF EXISTS (SELECT * FROM chardata WHERE DebutGame LIKE '%' + 'SF4' + '%')
+    UPDATE chardata SET DebutSeries = 'Street Fighter IV' WHERE DebutGame LIKE '%' + 'SF4' + '%';
+
+IF EXISTS (SELECT * FROM chardata WHERE DebutGame LIKE '%' + 'SF5' + '%')
+    UPDATE chardata SET DebutSeries = 'Street Fighter V' WHERE DebutGame LIKE '%' + 'SF5' + '%';
+
+IF EXISTS (SELECT * FROM chardata WHERE DebutGame LIKE '%' + 'FF' + '%')
+    UPDATE chardata SET DebutSeries = 'Final Fight' WHERE DebutGame LIKE '%' + 'FF' + '%';
+
+/* print results */
+
+SELECT *
+FROM chardata;
